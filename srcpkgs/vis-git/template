@@ -1,0 +1,25 @@
+pkgname=vis-git
+version=0.9
+revision=1
+build_style=gnu-configure
+hostmakedepends="pkg-config git"
+makedepends="acl-devel libtermkey-devel lua54-devel ncurses-devel tre-devel"
+depends="lua54-lpeg"
+short_desc="Vi-like editor based on Plan 9's structural regular expressions (Git)"
+maintainer="Thanh Hieu Cao <0.hieucao@gmail.com>"
+license="ISC"
+homepage="https://github.com/martanne/vis"
+conflicts="vis outils"
+alternatives="vi:vi:/usr/bin/vis"
+
+_giturl="https://github.com/martanne/vis"
+_gitrev="master"
+
+do_fetch() {
+	git clone --depth 1 ${_giturl} -b ${_gitrev} ${wrksrc}
+}
+
+post_install() {
+	vlicense LICENSE
+}
+
