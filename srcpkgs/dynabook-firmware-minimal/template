@@ -1,0 +1,46 @@
+# Template file for 'linux-firmware'
+pkgname=linux-firmware
+version=20260410
+revision=1
+hostmakedepends="rdfind which $(vopt_if compressed zstd)"
+#depends="linux-firmware-amd>=${version}_${revision} linux-firmware-network>=${version}_${revision}"
+short_desc="Dynabook - minimal set of firmware for x40j"
+maintainer="hieuc"
+license="custom:see /usr/share/licenses/linux-firmware"
+homepage="https://www.kernel.org/"
+changelog="https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/log/"
+distfiles="https://gitlab.com/kernel-firmware/linux-firmware/-/archive/${version}/linux-firmware-${version}.tar.gz"
+checksum=e17162a562ffc6499a388527802b24eb034f4d1c8a61f46ef8dc648f8d2ae8e6
+python_version=3
+nostrip=yes
+
+build_options="compressed"
+build_options_default="compressed"
+desc_option_compressed="compress firmware with zstd"
+
+do_install() {
+	if [ -n "$build_option_compressed" ]; then
+		env ZSTD_CLEVEL=9 ZSTD_NBTHREADS="$XBPS_MAKEJOBS" \
+			make install-zst dedup FIRMWAREDIR=/usr/lib/firmware DESTDIR="$DESTDIR"
+	else
+		make install dedup FIRMWAREDIR=/usr/lib/firmware DESTDIR="$DESTDIR"
+	fi
+
+#	for _l in LICEN* WHENCE
+#	do
+#		vlicense "$_l"
+#	done
+}
+
+dynabook-firmware-minimal_package() {
+    short_desc+=" - minimal wifi/net, graphic firmware for x40j"
+    nostrip=yes
+    pkg_install() {
+        vmove "usr/lib/firmware/intel/iwlwifi/iwlwifi-QuZ-a0-hr-b0-77*"
+        vmove "usr/lib/firmware/iwlwifi-QuZ-a0-hr-b0-77*"
+        vmove "usr/lib/firmware/i915/tgl_dmc_ver2_12*"
+        vmove "usr/lib/firmware/i915/tgl_guc_70*"
+        vmove "usr/lib/firmware/i915/tgl_huc*"
+        vmove "usr/lib/firmware/rtl_nic/rtl8153*"
+    }
+}
